@@ -31,6 +31,8 @@ BstNode* Delete(BstNode* root, int data);
 //FindMin(root->right)
 BstNode* FindMin(BstNode* root);
 
+BstNode* PreOrder(BstNode* root);
+
 BstNode* tempNode = NULL;
 
 int main() {
@@ -56,9 +58,9 @@ int main() {
 	while (1) {
 		cout << "Choose the number of the option to be performed:\n";
 		cout << "\t1 Create Tree\n";
-		cout << "\t2 Insert Value\n";
-		cout << "\t3 Delete Value\n";
-		cout << "\t4 Search for Value\n";
+		cout << "\t2 Insert data\n";
+		cout << "\t3 Delete data\n";
+		cout << "\t4 Search for data\n";
 		cout << "\t5 Transversal\n";
 		cout << "\t6 Delete Tree\n";
 		cout << "\t7 Check Balance\n";
@@ -81,24 +83,32 @@ int main() {
 		case '2': 
 				break;
 		case '3': {
-			cout << "Please enter the number you want to delete\n";
-			cin >> delete_int;
-			Delete(root, delete_int);
-		}
-				break;
-			case '4':{
+			if (root == NULL) {
+				cout << "Node cannot be deleted. Empty Tree!\n";
+			}
+			else {
+				cout << "Please enter the number you want to delete\n";
+				cin >> delete_int;
+				Delete(root, delete_int);
+			}
+			break;
+		case '4': {
 			cout << "Search tree:\nPlease enter a number to search for:\n";
 			cin >> search_int;
-			
+
 			if (search_tree(root, search_int)) {
 				cout << "The number is in the tree";
 			}
 			else {
 				cout << "The number is NOT in the tree";
 			}
-			}
+		}
+		}
 				break;
-			case '5':
+		case '5': {
+			cout << "Beginning Pre-order traversal\n";
+			PreOrder(root);
+			}
 				break;
 			case '6':
 				break;
@@ -214,4 +224,14 @@ BstNode* FindMin(BstNode* root) {
 	
 	return root;
 
+}
+
+BstNode* PreOrder(BstNode* root) {
+	if (root != NULL) {
+		cout << root->data;
+		cout << "\n";
+		PreOrder(root->left);
+		PreOrder(root->right);
+	}
+	return root;
 }
