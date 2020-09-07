@@ -27,6 +27,10 @@ void delete_tree();
 bool search_tree(BstNode* root, int data);
 
 BstNode* Delete(BstNode* root, int data);
+
+//FindMin(root->right)
+BstNode* FindMin(BstNode* root);
+
 BstNode* tempNode = NULL;
 
 int main() {
@@ -77,22 +81,9 @@ int main() {
 		case '2': 
 				break;
 		case '3': {
-			if (root == NULL) {
-				cout << "There is no tree to delete from!\n";
-			}
-			else {
-				cout << "Delete Node:\n";
-				cout << "Please enter the number you would like to delete:\n";
-				cin >> delete_int;
-				if (search_tree(root, delete_int)) {
-					cout << "the number will be deleted\n";
-				}
-				else {
-					cout << "the number is not present\n";
-
-				}
-
-			}
+			cout << "Please enter the number you want to delete\n";
+			cin >> delete_int;
+			Delete(root, delete_int);
 		}
 				break;
 			case '4':{
@@ -179,14 +170,48 @@ BstNode* Delete(BstNode* root, int data) {
 	else {	//search is complete, now we need to handle deletion
 		//no child node
 		if (root->left == NULL && root->right == NULL) {
+			cout << "deleting node no child\n";
+			cout << root->data;
 			delete root;
 			root = NULL;
-			return root;	//completes tree at previous else-if statement (== NULL)
+				
 		}
 		//one child node
 		else if (root->left == NULL) {
-
+			//BstNode* tempNode = new BstNode();
+			cout << "deleting node one child\n";
+			cout << root->data;
+			struct BstNode *temp = root;
+			root = root->right;
+			delete temp;
+		}
+		else if (root->right == NULL) {
+			cout << "deleting node right child\n";
+			cout << root->data;
+			struct BstNode* temp = root;
+			root = root->left;
+			delete temp;
+		}
+		//two children
+		else {
+			cout << "deleting node left child\n";
+			cout << root->data;
+			struct BstNode* temp = FindMin(root->right);
+			root->data = temp->data;
+			root->right = Delete(root->right, temp->data);
 		}
 
 	}
+
+	return root;		//completes tree at previous else-if statement (== NULL)
+}
+
+//FindMin(root->right)
+BstNode* FindMin(BstNode* root) {
+	if(root->left != NULL) {
+		root = FindMin(root->left);
 	}
+	
+	return root;
+
+}
