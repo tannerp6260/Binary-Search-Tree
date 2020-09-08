@@ -5,13 +5,11 @@
 
 using namespace std;
 
-
 struct BstNode {
 	int data;
 	BstNode* left;
 	BstNode* right;
 };
-
 BstNode* GetNewNode(int data) {
 	BstNode* newNode = new BstNode();
 	newNode->data = data;
@@ -20,31 +18,24 @@ BstNode* GetNewNode(int data) {
 
 	return newNode;
 }
-
 BstNode* Insert(BstNode* root, int data);
-
 void delete_tree();
-
 bool search_tree(BstNode* root, int data);
-
 BstNode* Delete(BstNode* root, int data);
-
-//FindMin(root->right)
 BstNode* FindMin(BstNode* root);
-
 BstNode* PreOrder(BstNode* root);
-
 BstNode* PostOrder(BstNode* root);
-
 BstNode* tempNode = NULL;
-
 BstNode* InOrder(BstNode* root);
-
 void delete_tree(BstNode* root); 
-
 int height(BstNode* root);
-
 int difference(BstNode* root);
+BstNode* rr_rotat(BstNode* root);
+BstNode* rl_rotat(BstNode* root);
+BstNode* ll_rotat(BstNode* root);
+BstNode* lr_rotat(BstNode* root);
+
+BstNode* balanceTree(BstNode* root);
 
 int main() {
 	BstNode* root = NULL;
@@ -91,6 +82,9 @@ int main() {
 			while (inFile >> x) {
 				root = Insert(root, x);
 			}
+
+			root = balanceTree(root);
+
 			}
 				break;
 		case '2': {
@@ -98,6 +92,7 @@ int main() {
 			cin >> insertion_int;
 			
 			root = Insert(root, insertion_int);
+			root = balanceTree(root);
 		}
 				break;
 		case '3': {
@@ -231,7 +226,6 @@ BstNode* Delete(BstNode* root, int data) {
 		if (root->left == NULL && root->right == NULL) {
 			delete root;
 			root = NULL;
-				
 		}
 		//one child node
 		else if (root->left == NULL) {
@@ -251,7 +245,6 @@ BstNode* Delete(BstNode* root, int data) {
 			root->data = temp->data;
 			root->right = Delete(root->right, temp->data);
 		}
-
 	}
 
 	return root;		//completes tree at previous else-if statement (== NULL)
@@ -325,4 +318,52 @@ int height(BstNode* root) {
 		height_int = max_height + 1;
 	}
 	return height_int;
+}
+
+BstNode* balanceTree(BstNode* root) {
+	int bal_factor = difference(root);
+	if (bal_factor > 1) {
+		if (difference(root->left) > 0)
+			root = ll_rotat(root);
+		else
+			root = lr_rotat(root);
+	}
+	else if (bal_factor < -1) {
+		if (difference(root->right) > 0)
+			root = rl_rotat(root);
+		else
+			root = rr_rotat(root);
+	}
+	return root;
+}
+
+BstNode* rr_rotat(BstNode* previousNode) {
+	BstNode* currentNode;
+	currentNode = previousNode->right;
+	previousNode->right = currentNode->left;
+	currentNode->left = previousNode;
+	cout << "Right-Right Rotation";
+	return currentNode;
+}
+BstNode* ll_rotat(BstNode* previousNode) {
+	BstNode* currentNode;
+	currentNode = previousNode->left;
+	previousNode->left = currentNode->right;
+	currentNode->right = previousNode;
+	cout << "Left-Left Rotation";
+	return currentNode;
+}
+BstNode* lr_rotat(BstNode* previousNode) {
+	BstNode* currentNode;
+	currentNode = previousNode->left;
+	previousNode->left = rr_rotat(currentNode);
+	cout << "Left-Right Rotation";
+	return ll_rotat(previousNode);
+}
+BstNode* rl_rotat(BstNode* previousNode) {
+	BstNode* currentNode;
+	currentNode = previousNode->right;
+	previousNode->right = ll_rotat(currentNode);
+	cout << "Right-Left Rotation";
+	return rr_rotat(previousNode);
 }
