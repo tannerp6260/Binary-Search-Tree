@@ -33,7 +33,11 @@ BstNode* FindMin(BstNode* root);
 
 BstNode* PreOrder(BstNode* root);
 
+BstNode* PostOrder(BstNode* root);
+
 BstNode* tempNode = NULL;
+
+BstNode* InOrder(BstNode* root);
 
 int main() {
 	BstNode* root = NULL;
@@ -42,6 +46,7 @@ int main() {
 	int x = 0;
 	int search_int = 0;
 	int delete_int = 0;
+	int traversal_int = 0;
 
 	/*Open input file*/
 	inFile.open("input.txt");
@@ -106,8 +111,26 @@ int main() {
 		}
 				break;
 		case '5': {
-			cout << "Beginning Pre-order traversal\n";
-			PreOrder(root);
+			cout << "Enter the corresponding number to select traversal type:\n";
+			cout << "1 Pre-Order\n";
+			cout << "2 Post-Order\n";
+			cout << "3 In-Order\n";
+			cout << "------------------------------------------------------------------\n";
+			//add error handling for cases where not 1,2,3
+			cin >> traversal_int;
+			
+			if (traversal_int == 1) {
+				PreOrder(root);
+			}
+			else if(traversal_int == 2){
+				PostOrder(root);
+			}
+			else if (traversal_int == 3) {
+				InOrder(root);
+			}
+			else {
+				cout << "Error, please enter a valid number (1, 2, or 3)\n";
+			}
 			}
 				break;
 			case '6':
@@ -223,7 +246,6 @@ BstNode* FindMin(BstNode* root) {
 	}
 	
 	return root;
-
 }
 
 BstNode* PreOrder(BstNode* root) {
@@ -232,6 +254,26 @@ BstNode* PreOrder(BstNode* root) {
 		cout << "\n";
 		PreOrder(root->left);
 		PreOrder(root->right);
+	}
+	return root;
+}
+
+BstNode* PostOrder(BstNode* root) {
+	if (root != NULL) {
+		PostOrder(root->left);
+		PostOrder(root->right);
+		cout << root->data;
+		cout << "\n";
+	}
+		return root;
+}
+
+BstNode* InOrder(BstNode* root) {
+	if (root != NULL) {
+		InOrder(root->left);
+		cout << root->data;
+		cout << "\n";
+		InOrder(root->right);
 	}
 	return root;
 }
