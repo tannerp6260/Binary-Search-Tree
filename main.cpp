@@ -47,6 +47,7 @@ int main() {
 	int search_int = 0;
 	int delete_int = 0;
 	int traversal_int = 0;
+	int insertion_int = 0;
 
 	/*Open input file*/
 	inFile.open("input.txt");
@@ -85,7 +86,13 @@ int main() {
 			}
 			}
 				break;
-		case '2': 
+		case '2': {
+			cout << "Please enter the number you would like to add to the tree:\n";
+			cin >> insertion_int;
+			cout << "------------------------------------------------------------------\n";
+			
+			root = Insert(root, insertion_int);
+		}
 				break;
 		case '3': {
 			if (root == NULL) {
@@ -115,10 +122,10 @@ int main() {
 			cout << "1 Pre-Order\n";
 			cout << "2 Post-Order\n";
 			cout << "3 In-Order\n";
-			cout << "------------------------------------------------------------------\n";
 			//add error handling for cases where not 1,2,3
 			cin >> traversal_int;
-			
+			cout << "------------------------------------------------------------------\n";
+
 			if (traversal_int == 1) {
 				PreOrder(root);
 			}
@@ -153,11 +160,14 @@ BstNode* Insert(BstNode* root, int data) {
 	if (root == NULL) {
 		root = GetNewNode(data);
 	}
-	else if (data <= root->data) {
+	else if (data < root->data) {
 		root->left = Insert(root->left, data); 
 	}
-	else {
+	else if (data > root->data) {
 		root->right = Insert(root->right, data);
+	}
+	else {
+		cout << "The selected number already exists!\n";
 	}
 
 	return root;
