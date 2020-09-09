@@ -29,11 +29,11 @@ BstNode* tempNode = NULL;
 BstNode* InOrder(BstNode* root);
 void delete_tree(BstNode* root); 
 int height(BstNode* root);
-int difference(BstNode* root);
-BstNode* rr_rotat(BstNode* root);
-BstNode* rl_rotat(BstNode* root);
-BstNode* ll_rotat(BstNode* root);
-BstNode* lr_rotat(BstNode* root);
+int balance(BstNode* root);
+BstNode* RightRight_Rotate(BstNode* root);
+BstNode* RightLeft_Rotate(BstNode* root);
+BstNode* LeftLeft_Rotate(BstNode* root);
+BstNode* LeftRight_Rotate(BstNode* root);
 
 BstNode* balanceTree(BstNode* root);
 
@@ -53,11 +53,6 @@ int main() {
 	if (!inFile) {
 		cout << "Unable to open input.txt";
 	}
-
-	//while (inFile >> x) {
-		//cout << x;
-		//cout << "\n";
-	//}
 
 	while (1) {
 		cout << "\n------------------------------------------------------------------\n";
@@ -102,7 +97,13 @@ int main() {
 			else {
 				cout << "\n\n\n\tPlease enter the number you want to delete\n\n";
 				cin >> delete_int;
-				Delete(root, delete_int);
+
+				if (search_tree(root, delete_int)) {
+					cout << "Node cannot be found. Deletion cannot be performed";
+				}
+				else {
+					Delete(root, delete_int);
+				}
 			}
 			break;
 		case '4': {
@@ -152,10 +153,10 @@ int main() {
 			}
 				break;
 		case '7': {
-			cout << height(root);
-			cout << "\n";
-			cout << difference(root);
-			cout << "\n";
+			cout << "\n\n\n";
+			cout << "The balance of the tree is:\n\t";
+			cout << balance(root);
+			cout << "\n\n\n";
 			}
 				break;
 			default:
@@ -207,29 +208,22 @@ bool search_tree(BstNode* root, int data) {
 }
 
 BstNode* Delete(BstNode* root, int data) {
-	//if there is no tree
 	if (root == NULL) {
 		return NULL;
 	}
 	
-	//if data is less than current node's data move left
 	else if (data < root->data) {
 		root->left = Delete(root->left, data);
 	}
-	//if data is greater than current node's data move right
 	else if(data > root->data) {
 		root->right = Delete(root->right, data);
 	}
-	//if data is equal to current node's data delete object
-	else {	//search is complete, now we need to handle deletion
-		//no child node
+	else {	
 		if (root->left == NULL && root->right == NULL) {
 			delete root;
 			root = NULL;
 		}
-		//one child node
 		else if (root->left == NULL) {
-			//BstNode* tempNode = new BstNode();
 			struct BstNode *temp = root;
 			root = root->right;
 			delete temp;
@@ -239,7 +233,6 @@ BstNode* Delete(BstNode* root, int data) {
 			root = root->left;
 			delete temp;
 		}
-		//two children
 		else {
 			struct BstNode* temp = FindMin(root->right);
 			root->data = temp->data;
@@ -250,7 +243,6 @@ BstNode* Delete(BstNode* root, int data) {
 	return root;		//completes tree at previous else-if statement (== NULL)
 }
 
-//FindMin(root->right)
 BstNode* FindMin(BstNode* root) {
 	if(root->left != NULL) {
 		root = FindMin(root->left);
@@ -290,19 +282,19 @@ BstNode* InOrder(BstNode* root) {
 }
 
 void delete_tree(BstNode* root) {
-	if (root) {					//check to see if binary tree is empty
+	if (root) {					
 		if (root->left) {
-			delete_tree(root->left);		//go to the lowest value
+			delete_tree(root->left);		
 		}
 		if (root->right) {
-			delete_tree(root->right);		//go to the lowest value on tree
+			delete_tree(root->right);		
 		}
 
 		delete root;
 	}
 }
 
-int difference(BstNode* root) {
+int balance(BstNode* root) {
 	int left_height = height(root->left);
 	int right_height = height(root->right);
 	int balance_factor = left_height - right_height;
@@ -312,58 +304,60 @@ int difference(BstNode* root) {
 int height(BstNode* root) {
 	int height_int = 0;
 	if (root != NULL) {
-		int left_height = height(root->left);
 		int right_height = height(root->right);
-		int max_height = max(left_height, right_height);
+		int left_height = height(root->left);
+		int max_height = 0;
+		if (left_height > right_height) {
+			max_height = left_height;
+		}
+		else {
+			max_height = right_height;
+		}
 		height_int = max_height + 1;
 	}
 	return height_int;
 }
 
 BstNode* balanceTree(BstNode* root) {
-	int bal_factor = difference(root);
+	int bal_factor = balance(root);
 	if (bal_factor > 1) {
-		if (difference(root->left) > 0)
-			root = ll_rotat(root);
+		if (balance(root->left) > 0)
+			root = LeftLeft_Rotate(root);
 		else
-			root = lr_rotat(root);
+			root = LeftRight_Rotate(root);
 	}
 	else if (bal_factor < -1) {
-		if (difference(root->right) > 0)
-			root = rl_rotat(root);
+		if (balance(root->right) > 0)
+			root = RightLeft_Rotate(root);
 		else
-			root = rr_rotat(root);
+			root = RightRight_Rotate(root);
 	}
 	return root;
 }
 
-BstNode* rr_rotat(BstNode* previousNode) {
+BstNode* RightRight_Rotate(BstNode* previousNode) {
 	BstNode* currentNode;
 	currentNode = previousNode->right;
 	previousNode->right = currentNode->left;
 	currentNode->left = previousNode;
-	cout << "Right-Right Rotation";
 	return currentNode;
 }
-BstNode* ll_rotat(BstNode* previousNode) {
+BstNode* LeftLeft_Rotate(BstNode* previousNode) {
 	BstNode* currentNode;
 	currentNode = previousNode->left;
 	previousNode->left = currentNode->right;
 	currentNode->right = previousNode;
-	cout << "Left-Left Rotation";
 	return currentNode;
 }
-BstNode* lr_rotat(BstNode* previousNode) {
+BstNode* LeftRight_Rotate(BstNode* previousNode) {
 	BstNode* currentNode;
 	currentNode = previousNode->left;
-	previousNode->left = rr_rotat(currentNode);
-	cout << "Left-Right Rotation";
-	return ll_rotat(previousNode);
+	previousNode->left = RightRight_Rotate(currentNode);
+	return LeftLeft_Rotate(previousNode);
 }
-BstNode* rl_rotat(BstNode* previousNode) {
+BstNode* RightLeft_Rotate(BstNode* previousNode) {
 	BstNode* currentNode;
 	currentNode = previousNode->right;
-	previousNode->right = ll_rotat(currentNode);
-	cout << "Right-Left Rotation";
-	return rr_rotat(previousNode);
+	previousNode->right = LeftLeft_Rotate(currentNode);
+	return RightRight_Rotate(previousNode);
 }
