@@ -20,7 +20,7 @@ BstNode* GetNewNode(int data) {
 }
 BstNode* Insert(BstNode* root, int data);
 void delete_tree();
-bool search_tree(BstNode* root, int data);
+int search_tree(BstNode* root, int data);
 BstNode* Delete(BstNode* root, int data);
 BstNode* FindMin(BstNode* root);
 BstNode* PreOrder(BstNode* root);
@@ -40,19 +40,12 @@ BstNode* balanceTree(BstNode* root);
 int main() {
 	BstNode* root = NULL;
 	char input;
-	ifstream inFile;
-	int x = 0;
 	int search_int = 0;
 	int delete_int = 0;
 	int traversal_int = 0;
 	int insertion_int = 0;
 
-	/*Open input file*/
-	inFile.open("input.txt");
 
-	if (!inFile) {
-		cout << "Unable to open input.txt";
-	}
 
 	while (1) {
 		cout << "\n------------------------------------------------------------------\n";
@@ -69,12 +62,26 @@ int main() {
 
 		switch (input) {
 		case '1': {
-			cout << "\n\n\n\tCreating Tree tree from file input......\n\n\n";
-			delete_tree();
 
-			root = NULL;
+			/*Open input file*/
+			ifstream inFile;
+			int x = 0;
+
+			inFile.open("input.txt");
+
+			if (!inFile) {
+				cout << "Unable to open input.txt";
+			}
+
+			cout << "1\n";
+			delete_tree();
+			cout << "2";
+
+			cout << "\nCreate Tree: ";
 
 			while (inFile >> x) {
+				cout << x;
+				cout << " ";
 				root = Insert(root, x);
 			}
 
@@ -83,7 +90,7 @@ int main() {
 			}
 				break;
 		case '2': {
-			cout << "\n\n\n\tPlease enter the number you would like to add to the tree:\n\n";
+			cout << "\nPlease enter the number you would like to add to the tree:\n";
 			cin >> insertion_int;
 			
 			root = Insert(root, insertion_int);
@@ -92,39 +99,44 @@ int main() {
 				break;
 		case '3': {
 			if (root == NULL) {
-				cout << "\n\n\n\t\tNode cannot be deleted. Empty Tree!\n\n";
+				cout << "\n\tNode cannot be deleted. Empty Tree!\n";
 			}
 			else {
-				cout << "\n\n\n\tPlease enter the number you want to delete\n\n";
+				cout << "\nPlease enter the number you want to delete\n";
 				cin >> delete_int;
 
-				if (search_tree(root, delete_int)) {
-					cout << "Node cannot be found. Deletion cannot be performed";
+				if (search_tree(root, delete_int) == -1) {
+					cout << "\nNode cannot be found. Deletion cannot be performed\n";
 				}
 				else {
 					Delete(root, delete_int);
+					cout << "\nNumber Deleted.";
 				}
 			}
 			break;
 		case '4': {
-			cout << "\n\n\n\tPlease enter a number to search for:\n\n";
+			cout << "\nPlease enter a number to search for:\n";
 			cin >> search_int;
 
-			if (search_tree(root, search_int)) {
-				cout << "\n\n\n\tThe number is in the tree\n\n\n";
+			int search_tree_int = search_tree(root, search_int);
+
+			if (search_tree_int != -1) {
+				cout << "\nThe number is in the tree at height: ";
+				cout << search_tree_int;
+				cout << "\n";
 			}
 			else {
-				cout << "\n\n\n\tThe number is NOT in the tree\n\n\n";
+				cout << "\n\tThe number is NOT in the tree\n";
 			}
 		}
 		}
 				break;
 		case '5': {
 			if (root == NULL) {
-				cout << "\n\n\tThere is no tree to traverse!\n\n\n";
+				cout << "\n\tThere is no tree to traverse!\n";
 			}
 			else {
-				cout << "\n\n\n \tPlease enter the corresponding number to select traversal type:\n\n\n";
+				cout << "\nPlease enter the corresponding number to select traversal type:\n";
 				cout << "1 Pre-Order\n";
 				cout << "2 Post-Order\n";
 				cout << "3 In-Order\n\n";
@@ -132,35 +144,38 @@ int main() {
 				cin >> traversal_int;
 
 				if (traversal_int == 1) {
+					cout << "\n\n";
 					PreOrder(root);
 				}
 				else if (traversal_int == 2) {
+					cout << "\n\n";
 					PostOrder(root);
 				}
 				else if (traversal_int == 3) {
+					cout << "\n\n";
 					InOrder(root);
 				}
 				else {
-					cout << "\n\n\n\tError, \n\n\n\tPlease enter a valid number (1, 2, or 3)\n\n\n";
+					cout << "\n\tError, \n\tPlease enter a valid number (1, 2, or 3)\n";
 				}
 			}
 		}
 				break;
 		case '6': {
-			cout << "\n\n\n\tDeleting tree...\n\n\n";
+			cout << "\nDelete Tree: Tree Deleted\n";
 			delete_tree(root);
 			root = NULL;
 			}
 				break;
 		case '7': {
-			cout << "\n\n\n";
-			cout << "The balance of the tree is:\n\t";
+			cout << "\n";
+			cout << "The balance of the tree is: ";
 			cout << balance(root);
-			cout << "\n\n\n";
+			cout << "\n";
 			}
 				break;
 			default:
-				cout << "\n\n\n\terror\n\n\n";
+				cout << "\n\terror\n";
 		}
 		input = getchar();
 	}
@@ -179,7 +194,7 @@ BstNode* Insert(BstNode* root, int data) {
 		root->right = Insert(root->right, data);
 	}
 	else {
-		cout << "\n\n\n\tThe selected number already exists!\n\n\n";
+		cout << "\n\tThe selected number already exists!\n";
 	}
 
 	return root;
@@ -189,13 +204,13 @@ void delete_tree() {
 
 }
 
-bool search_tree(BstNode* root, int data) {
+int search_tree(BstNode* root, int data) {
 	if (root == NULL) {
-		return 0;
+		return -1;
 	}
 
 	else if (root->data == data) {
-		return 1;
+		return height(root);
 	}
 
 	else if (data <= root->data) {
